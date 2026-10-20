@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* RESET */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+/* BACKGROUND */
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #172554, #0c0a09);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+@keyframes gradientMove {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* LOGIN BOX */
+.login-box{
+    width:400px;
+    padding:40px 35px;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border-radius:20px;
+    color:white;
+    text-align:center;
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(20px) scale(0.98);}
+    to {opacity:1; transform:translateY(0) scale(1);}
+}
+
+/* HEADER */
+.login-header {
+    margin-bottom: 30px;
+}
+
+.login-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+h2{
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+}
+
+/* LABEL */
+label{
+    display:block;
+    text-align:left;
+    font-size:13px;
+    font-weight: 500;
+    margin:18px 0 8px;
+    color: rgba(255,255,255,0.8);
+}
+
+/* INPUT BOX */
+.input-box{
+    position:relative;
+    margin-bottom:5px;
+}
+
+/* INPUT - Changed to light background so black icons are visible */
+.input-box input{
+    width:100%;
+    padding:14px 45px 14px 45px;
+    border: 1px solid rgba(255,255,255,0.1);
+    outline:none;
+    border-radius:12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #111827;
+    font-size:14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.input-box input:focus {
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* PLACEHOLDER */
+input::placeholder{
+    color: #6b7280;
+}
+
+/* LEFT ICON - Changed to black */
+.input-box i.fa-user,
+.input-box i.fa-lock{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    color: #000000;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.input-box input:focus ~ i.fa-user,
+.input-box input:focus ~ i.fa-lock {
+    color: #000000;
+}
+
+/* EYE ICON (RIGHT) - Changed to black */
+.toggle-password{
+    position:absolute;
+    right:16px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color: #000000;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover{
+    color: #4b5563;
+}
+
+/* OPTIONS */
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    margin:20px 0;
+}
+
+.remember{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+}
+
+.remember input{
+    width:16px;
+    height:16px;
+    accent-color:#6366f1;
+    cursor: pointer;
+}
+
+.forgot-link{
+    color: #818cf8;
+    text-decoration:none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-link:hover{
+    color: #a5b4fc;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color:white;
+    cursor:pointer;
+    font-weight:600;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    letter-spacing: 0.3px;
+}
+
+button:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* SPINNER */
+.spinner{
+    display:none;
+    margin-top:15px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+}
+
+.spinner i{
+    animation: spin 1s linear infinite;
+    color: #818cf8;
+    margin-right: 5px;
+}
+
+@keyframes spin {
+    100% {transform:rotate(360deg);}
+}
+
+/* DIVIDER */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+    gap: 15px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+}
+
+.divider span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* SOCIAL */
+.social{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+}
+
+.social button{
+    width: 50%;
+    font-size:13px;
+    background: rgba(15, 23, 42, 0.6);
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: none;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.social button:hover{
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+.social button i {
+    font-size: 16px;
+}
+
+.social button .fa-google {
+    color: #ea4335;
+}
+
+.social button .fa-facebook {
+    color: #1877f2;
+}
+
+/* FOOTER */
+.footer-text{
+    margin-top:25px;
+    font-size:14px;
+    color: rgba(255,255,255,0.6);
+}
+
+.footer-text a{
+    color: #818cf8;
+    font-weight:600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-text a:hover {
+    color: #a5b4fc;
+}
+
+/* ERROR */
+.error{
+    color:#fca5a5;
+    font-size:13px;
+    margin-bottom:15px;
+    padding: 10px 15px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.error::before {
+    content: '\f071';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="login-header">
+        <div class="login-icon">
+            <i class="fa fa-lock"></i>
+        </div>
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to continue to your account</p>
+    </div>
+
+    <form method="post" id="loginForm">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="error">
+                Invalid username or password
+            </div>
+        {% endif %}
+
+        <!-- USERNAME -->
+        <label>Username</label>
+        <div class="input-box">
+            <input type="text" name="username" placeholder="Enter your username" required>
+            <i class="fa fa-user"></i>
+        </div>
+
+        <!-- PASSWORD -->
+        <label>Password</label>
+        <div class="input-box">
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <i class="fa fa-lock"></i>
+            <span class="toggle-password" onclick="togglePassword()">
+                <i id="eyeIcon" class="fa fa-eye"></i>
+            </span>
+        </div>
+
+        <!-- OPTIONS -->
+        <div class="options">
+
+            <label class="remember">
+                <input type="checkbox">
+                Remember me
+            </label>
+
+            <a href="{% url 'password_reset' %}" class="forgot-link">
+                Forgot password?
+            </a>
+
+        </div>
+
+        <!-- BUTTON -->
+        <button type="submit" id="loginBtn">
+            Sign In
+        </button>
+
+        <!-- SPINNER -->
+        <div class="spinner" id="spinner">
+            <i class="fa fa-spinner"></i> Signing in...
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="divider">
+            <span>or continue with</span>
+        </div>
+
+        <!-- SOCIAL -->
+        <div class="social">
+            <button type="button"><i class="fab fa-google"></i> Google</button>
+            <button type="button"><i class="fab fa-facebook"></i> Facebook</button>
+        </div>
+
+        <div class="footer-text">
+            Don't have an account?
+            <a href="{% url 'register' %}">Create account</a>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+
+/* PASSWORD TOGGLE */
+function togglePassword(){
+    let pass = document.getElementById("password");
+    let eye = document.getElementById("eyeIcon");
+
+    if(pass.type === "password"){
+        pass.type = "text";
+        eye.classList.remove("fa-eye");
+        eye.classList.add("fa-eye-slash");
+    } else {
+        pass.type = "password";
+        eye.classList.remove("fa-eye-slash");
+        eye.classList.add("fa-eye");
+    }
+}
+
+/* LOADER (2 seconds delay login) */
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+
+    e.preventDefault();
+
+    document.getElementById("spinner").style.display = "block";
+
+    const btn = document.getElementById("loginBtn");
+    btn.innerText = "Signing in...";
+    btn.disabled = true;
+
+    setTimeout(() => {
+        this.submit();
+    }, 2000);
+
+});
+
+</script>
+
+</body>
+</html>

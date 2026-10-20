@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* RESET & BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+/* BACKGROUND - Matching previous pages */
+body {
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #172554, #0c0a09);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    position: relative;
+    display: flex;
+    flex-direction: column; /* Keeps navbar at the top, content below */
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes gradientMove {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* WRAPPER - Centers the form below the navbar */
+.page-wrapper {
+    flex: 1; /* Takes up all remaining space below the navbar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+/* PAGE CONTAINER */
+.page {
+    width: 100%;
+    max-width: 650px;
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* CARD */
+.card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 40px 35px;
+    border-radius: 20px;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* HEADER */
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+}
+
+/* FORM GRID */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* FORM GROUP */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+}
+
+/* INPUTS */
+input, select, textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    outline: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #111827;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* PLACEHOLDER */
+input::placeholder, textarea::placeholder {
+    color: #6b7280;
+}
+
+/* TEXTAREA */
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* SELECT DROPDOWN ARROW */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23111827' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 45px;
+    cursor: pointer;
+}
+
+/* BUTTONS */
+.buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+.reset-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.reset-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255,255,255,0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .card {
+        padding: 30px 20px;
+    }
+}
+
+</style>
+
+<!-- Wrapper to center content below the navbar -->
+<div class="page-wrapper">
+
+    <div class="page">
+
+        <div class="card">
+
+            <div class="form-header">
+                <div class="header-icon">
+                    <i class="fa fa-plus"></i>
+                </div>
+                <h2 class="title">Add New Record</h2>
+                <p class="subtitle">Fill in the details below</p>
+            </div>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Record Type</label>
+                    {{ form.record_type }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Main Category</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="form-group">
+                        <label>Sub Category</label>
+                        {{ form.sub_category }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        {{ form.date }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    {{ form.description }}
+                </div>
+
+                <div class="buttons">
+
+                    <button type="submit" class="save-btn">
+                        Save Record
+                    </button>
+                    <button type="reset" class="reset-btn">
+                        Reset
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    const recordType = document.getElementById('id_record_type');
+    const category = document.getElementById('id_category');
+    const subCategory = document.getElementById('id_sub_category');
+
+    if(recordType) {
+        recordType.addEventListener('change', function(){
+
+            fetch('/records/ajax/load-categories/?record_type=' + this.value)
+            .then(response => response.json())
+            .then(data => {
+
+                category.innerHTML = '<option value="">Select Category</option>';
+                subCategory.innerHTML = '<option value="">Select Sub Category</option>';
+
+                data.forEach(item => {
+                    category.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+                });
+
+            });
+
+        });
+    }
+
+    if(category) {
+        category.addEventListener('change', function(){
+
+            fetch('/records/ajax/load-subcategories/?category=' + this.value)
+            .then(response => response.json())
+            .then(data => {
+
+                subCategory.innerHTML = '<option value="">Select Sub Category</option>';
+
+                data.forEach(item => {
+                    subCategory.innerHTML += `<option value="${item.id}">${item.name}</option>`;
+                });
+
+            });
+
+        });
+    }
+
+});
+
+</script>
+
+{% endblock %}

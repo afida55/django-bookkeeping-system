@@ -1,0 +1,659 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* PAGE CONTAINER - Full Width */
+.records-page {
+    width: 100%;
+    padding: 30px 40px;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER SECTION */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-title-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.title-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+}
+
+.stat-badge {
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-badge i {
+    color: #a78bfa;
+    font-size: 18px;
+}
+
+.stat-badge strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* ADD BUTTON */
+.add-record-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
+    border: none;
+    cursor: pointer;
+}
+
+.add-record-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+}
+
+.add-record-btn i {
+    font-size: 16px;
+}
+
+/* ================= FILTER CARD ================= */
+.filter-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.filter-header i {
+    color: #a78bfa;
+    font-size: 18px;
+}
+
+.filter-header h4 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.filter-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-group label {
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    color: #111827;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: #8b5cf6;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.filter-group input::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+}
+
+.filter-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23111827' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 45px;
+    cursor: pointer;
+}
+
+.filter-group select option {
+    background: #ffffff;
+    color: #111827;
+    padding: 10px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.filter-btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+}
+
+.reset-btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.reset-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* TABLE CONTAINER */
+.table-wrapper {
+    background: #1e293b;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table-header {
+    padding: 24px 30px;
+    background: #1e293b;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.table-header i {
+    color: #a78bfa;
+    font-size: 20px;
+}
+
+.table-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+th {
+    padding: 18px 30px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+}
+
+td {
+    padding: 20px 30px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: all 0.2s ease;
+    background: #1e293b;
+}
+
+tbody tr:nth-child(even) {
+    background: rgba(30, 41, 59, 0.8);
+}
+
+tbody tr:hover {
+    background: rgba(139, 92, 246, 0.1);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* TYPE COLUMN */
+td.type {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* AMOUNT COLUMN */
+td.amount {
+    font-weight: 600;
+    color: #a78bfa;
+    font-size: 15px;
+}
+
+/* DESCRIPTION COLUMN */
+td.description {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ACTION BUTTONS */
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.edit-btn:hover {
+    background: rgba(245, 158, 11, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-state i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.empty-state h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 25px;
+}
+
+/* SCROLLBAR */
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .records-page {
+        padding: 20px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .add-record-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    th, td {
+        padding: 14px 20px;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        min-width: 100%;
+    }
+
+    .filter-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .filter-btn,
+    .reset-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+</style>
+
+<div class="records-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title-section">
+            <div class="title-icon">
+                <i class="fa fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-badge">
+                <i class="fa fa-database"></i>
+                <span>Total Records: <strong>{{ record_count }}</strong></span>
+            </div>
+        </div>
+
+        <a href="{% url 'add_record' %}" class="add-record-btn">
+            <i class="fa fa-plus-circle"></i>
+            Add New Record
+        </a>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+
+        <div class="filter-header">
+            <i class="fa fa-filter"></i>
+            <h4>Filter Records</h4>
+        </div>
+
+        <form method="GET" class="filter-form">
+
+            {% if request.user.is_superuser %}
+
+            <div class="filter-group">
+                <label>User</label>
+
+                <select name="user">
+
+                    <option value="">All Users</option>
+
+                    {% for user in users %}
+
+                    <option value="{{ user.id }}"
+                        {% if selected_user == user.id|stringformat:"s" %}selected{% endif %}>
+                        {{ user.username }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            {% endif %}
+
+            <div class="filter-group">
+                <label>From Date</label>
+
+                <input
+                    type="date"
+                    name="start_date"
+                    value="{{ start_date }}">
+            </div>
+
+            <div class="filter-group">
+                <label>To Date</label>
+
+                <input
+                    type="date"
+                    name="end_date"
+                    value="{{ end_date }}">
+            </div>
+
+            <div class="filter-actions">
+
+                <button type="submit" class="filter-btn">
+                    <i class="fa fa-filter"></i>
+                    Filter
+                </button>
+
+                <a href="{% url 'record_list' %}" class="reset-btn">
+                    <i class="fa fa-rotate-left"></i>
+                    Reset
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-wrapper">
+        <div class="table-header">
+            <i class="fa fa-list"></i>
+            <span class="table-title">Records Overview</span>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Sub Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td class="type">{{ record.record_type }}</td>
+                        <td>{{ record.category }}</td>
+                        <td>{{ record.sub_category }}</td>
+                        <td class="amount">${{ record.amount }}</td>
+                        <td class="description" title="{{ record.description }}">
+                            {{ record.description }}
+                        </td>
+                        <td>{{ record.date }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'edit_record' record.id %}" class="action-btn edit-btn">
+                                    <i class="fa fa-pen"></i>
+                                    Edit
+                                </a>
+                                <a href="{% url 'delete_record' record.id %}" class="action-btn delete-btn">
+                                    <i class="fa fa-trash-alt"></i>
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fa fa-folder-open"></i>
+                                <h3>No Records Found</h3>
+                                <p>Start by adding your first financial record</p>
+                                <a href="{% url 'add_record' %}" class="add-record-btn">
+                                    <i class="fa fa-plus"></i>
+                                    Add Your First Record
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

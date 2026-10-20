@@ -1,0 +1,562 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* PAGE CONTAINER */
+.page{
+    max-width:1000px;
+    margin:auto;
+    padding:40px 20px;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* PAGE HEADER */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.header-text h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.header-text p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* FILTER BUTTONS */
+.type-switch{
+    display:flex;
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.filter-btn{
+    padding:12px 24px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-btn:first-child {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.filter-btn:first-child:hover {
+    background: rgba(239, 68, 68, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.filter-btn:last-child {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.filter-btn:last-child:hover {
+    background: rgba(16, 185, 129, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* ADD MAIN CATEGORY BOX */
+.top-box{
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding:25px;
+    border-radius:16px;
+    margin-bottom:25px;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.top-box form{
+    display:flex;
+    gap:12px;
+    align-items: center;
+}
+
+.top-box input,
+.top-box select{
+    padding:14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius:12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #111827;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.top-box input:focus,
+.top-box select:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.top-box input::placeholder {
+    color: #6b7280;
+}
+
+.top-box input{
+    flex:1;
+}
+
+.top-box select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23111827' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 45px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+/* CATEGORY CARDS */
+.cat{
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius:16px;
+    margin-bottom:15px;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.cat:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 30px 60px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(255,255,255,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.cat-header{
+    padding:20px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+    transition: background 0.3s ease;
+}
+
+.cat-header:hover {
+    background: rgba(139, 92, 246, 0.08);
+}
+
+.cat-title{
+    font-weight:600;
+    font-size:18px;
+    color: #ffffff;
+    margin-right: 12px;
+}
+
+.sub-wrap{
+    display:none;
+    padding:20px 25px;
+    border-top:1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.3);
+}
+
+.sub-input{
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.sub-input input{
+    flex:1;
+    padding:12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius:10px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #111827;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.sub-input input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.sub-input input::placeholder {
+    color: #6b7280;
+}
+
+.btn{
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:12px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+}
+
+.sub-item{
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+    padding:14px 18px;
+    border-bottom:1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+}
+
+.sub-item:hover {
+    background: rgba(139, 92, 246, 0.08);
+}
+
+.sub-item:last-child {
+    border-bottom: none;
+}
+
+.sub-item span {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+}
+
+.delete{
+    color:#f87171;
+    text-decoration:none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.delete:hover {
+    color: #ffffff;
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
+
+.badge{
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight: 600;
+    color:white;
+    display: inline-block;
+}
+
+.expense{
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.income{
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .page {
+        padding: 20px 15px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .top-box form {
+        flex-direction: column;
+    }
+
+    .top-box select {
+        width: 100%;
+    }
+
+    .sub-input {
+        flex-direction: column;
+    }
+
+    .type-switch {
+        flex-direction: column;
+    }
+
+    .filter-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+</style>
+
+<div class="page">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="header-icon">
+            <i class="fa fa-tags"></i>
+        </div>
+        <div class="header-text">
+            <h1>Categories</h1>
+            <p>Manage your main categories and subcategories</p>
+        </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="type-switch">
+
+        <button class="filter-btn"
+                onclick="filterCategory('Expense')">
+            <i class="fa fa-arrow-down"></i>
+            Expense
+        </button>
+
+        <button class="filter-btn"
+                onclick="filterCategory('Income')">
+            <i class="fa fa-arrow-up"></i>
+            Income
+        </button>
+
+    </div>
+
+    <!-- ADD MAIN -->
+    <div class="top-box">
+
+        <form method="POST"
+              action="{% url 'add_main_category' %}">
+
+            {% csrf_token %}
+
+            <input type="text"
+                   name="name"
+                   placeholder="Main category name">
+
+            <select name="category_type">
+                <option value="Expense">Expense</option>
+                <option value="Income">Income</option>
+            </select>
+
+            <button class="btn" type="submit">
+                <i class="fa fa-plus"></i>
+                Add
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="categoryContainer">
+
+        {% for cat in main_categories %}
+
+        <div class="cat"
+             data-type="{{ cat.category_type }}">
+
+            <div class="cat-header"
+                 onclick="toggle({{ cat.id }})">
+
+                <div>
+
+                    <span class="cat-title">
+                        {{ cat.name }}
+                    </span>
+
+                    {% if cat.category_type == 'Expense' %}
+                        <span class="badge expense">
+                            <i class="fa fa-arrow-down"></i>
+                            Expense
+                        </span>
+                    {% else %}
+                        <span class="badge income">
+                            <i class="fa fa-arrow-up"></i>
+                            Income
+                        </span>
+                    {% endif %}
+
+                    <!-- Show owner only for admin -->
+                    {% if request.user.is_superuser %}
+                    <div style="margin-top:8px;font-size:13px;color:#a78bfa;">
+                        <i class="fa fa-user"></i>
+                        Owner: <strong>{{ cat.user.username }}</strong>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <a href="{% url 'delete_main_category' cat.id %}"
+                   class="delete"
+                   onclick="event.stopPropagation();">
+                    <i class="fa fa-trash-alt"></i>
+                </a>
+
+            </div>
+
+            <div class="sub-wrap"
+                 id="sub-{{ cat.id }}">
+
+                <!-- ADD SUB -->
+                <form method="POST"
+                      action="{% url 'add_sub_category' %}"
+                      class="sub-input">
+
+                    {% csrf_token %}
+
+                    <input type="hidden"
+                           name="main_category"
+                           value="{{ cat.id }}">
+
+                    <input type="text"
+                           name="name"
+                           placeholder="Add subcategory">
+
+                    <button class="btn" type="submit">
+                        <i class="fa fa-plus"></i>
+                        Add
+                    </button>
+
+                </form>
+
+                <!-- SUB LIST -->
+                {% for sub in cat.subcategories.all %}
+
+                <div class="sub-item">
+
+                    <span>
+                        <i class="fa fa-circle"
+                           style="font-size:6px;margin-right:10px;color:#8b5cf6;"></i>
+
+                        {{ sub.name }}
+
+                        {% if request.user.is_superuser %}
+                            <small style="color:#94a3b8;">
+                                ({{ cat.user.username }})
+                            </small>
+                        {% endif %}
+                    </span>
+
+                    <a href="{% url 'delete_sub_category' sub.id %}"
+                       class="delete">
+                        <i class="fa fa-trash-alt"></i>
+                    </a>
+
+                </div>
+
+                {% empty %}
+
+                <div class="sub-item">
+                    <span style="color:rgba(255,255,255,.5);font-style:italic;">
+                        No subcategories
+                    </span>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+
+function toggle(id){
+
+    let box = document.getElementById('sub-'+id);
+
+    if(box.style.display === 'block'){
+        box.style.display='none';
+    }else{
+        box.style.display='block';
+    }
+}
+
+function filterCategory(type){
+
+    let cards = document.querySelectorAll('.cat');
+
+    cards.forEach(card => {
+
+        if(card.dataset.type === type){
+            card.style.display='block';
+        }else{
+            card.style.display='none';
+        }
+
+    });
+
+}
+
+filterCategory('Expense');
+
+</script>
+
+{% endblock %}

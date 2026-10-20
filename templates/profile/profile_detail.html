@@ -1,0 +1,618 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* PAGE */
+body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+}
+
+/* WRAPPER */
+.dashboard{
+    padding:40px 20px;
+    max-width:1200px;
+    margin:auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TOP HEADER */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding:25px 30px;
+    border-radius:20px;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.user img{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid transparent;
+    background: linear-gradient(135deg, #8b5cf6, #a78bfa) border-box;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.user-info h3{
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+}
+
+.user-info small{
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+
+.edit-btn{
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    color:white;
+    padding:12px 24px;
+    border-radius:12px;
+    text-decoration:none;
+    font-size:14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+}
+
+/* INSIGHT */
+.insight{
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding:20px 25px;
+    border-radius:16px;
+    font-size:15px;
+    margin-bottom:30px;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.insight::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:4px;
+    height:100%;
+    background: linear-gradient(180deg, #8b5cf6, #a78bfa);
+}
+
+.insight-icon{
+    width:45px;
+    height:45px;
+    background: rgba(139, 92, 246, 0.15);
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    color: #a78bfa;
+    flex-shrink: 0;
+}
+
+.insight b{
+    color: #a78bfa;
+    font-weight: 700;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+}
+
+/* CARD */
+.card{
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card h3{
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card h3 i{
+    color: #a78bfa;
+    font-size: 20px;
+}
+
+/* BANK CARD - SCALED DOWN PROPORTIONALLY */
+.bank-card{
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+    padding: 15px 20px; /* Reduced padding (15px top/bottom, 20px sides) */
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    box-shadow: 0 15px 30px rgba(139, 92, 246, 0.3);
+    margin-bottom: 25px;
+    min-height: auto;
+}
+
+/* Scaled down decorative circles */
+.bank-card::after{
+    content:"";
+    position:absolute;
+    width: 100px;
+    height: 100px;
+    background:rgba(255,255,255,0.08);
+    border-radius:50%;
+    top:-40px;
+    right:-30px;
+}
+
+.bank-card::before{
+    content:"";
+    position:absolute;
+    width: 70px;
+    height: 70px;
+    background:rgba(255,255,255,0.05);
+    border-radius:50%;
+    bottom:-20px;
+    left:-15px;
+}
+
+.bank-card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.bank-card-header small{
+    opacity:0.8;
+    font-size: 11px;
+}
+
+.bank-card-header h2{
+    margin:0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.bank-card-number{
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.bank-card-holder{
+    font-size: 12px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.bank-stats{
+    display:flex;
+    justify-content:space-between;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    z-index: 1;
+}
+
+.bank-stat{
+    flex: 1;
+}
+
+.bank-stat small{
+    color:rgba(255,255,255,0.7);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.bank-stat h4{
+    margin:0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* CHART */
+.chart-box{
+    margin-top:0;
+}
+
+.chart-container {
+    position: relative;
+    height: 280px;
+    margin-top: 10px;
+}
+
+/* TRANSACTIONS */
+.txn{
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+    padding:16px 0;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    transition: all 0.2s ease;
+}
+
+.txn:last-child{
+    border-bottom: none;
+}
+
+.txn:hover{
+    background: rgba(139, 92, 246, 0.05);
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: -10px;
+    margin-right: -10px;
+    border-radius: 10px;
+}
+
+.txn-info b{
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.txn-info small{
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.txn-amount{
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Inter', monospace;
+}
+
+.txn-amount.income{
+    color: #10b981;
+}
+
+.txn-amount.expense{
+    color: #f87171;
+}
+
+.txn-empty{
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.txn-empty i{
+    font-size: 40px;
+    color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 20px 15px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .user {
+        flex-direction: column;
+    }
+
+    .edit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .bank-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+</style>
+
+<div class="dashboard">
+
+    <!-- HEADER -->
+    <div class="topbar">
+
+        <div class="user">
+            {% if profile.profile_pic %}
+                <img src="{{ profile.profile_pic.url }}">
+            {% else %}
+                <img src="https://via.placeholder.com/80">
+            {% endif %}
+
+            <div class="user-info">
+                <h3>{{ profile.user.username }}</h3>
+                <small>{{ profile.user.email }}</small>
+            </div>
+        </div>
+
+       <a href="{% url 'profile_edit' %}" class="edit-btn">
+           <i class="fa fa-pen"></i>
+           Edit Profile
+       </a>
+    </div>
+
+    <!-- INSIGHT -->
+    <div class="insight">
+        <div class="insight-icon">
+            <i class="fa fa-fire"></i>
+        </div>
+        <div>
+            You saved <b>18%</b> more this month compared to last month
+        </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid">
+
+        <!-- LEFT SIDE -->
+        <div>
+
+            <!-- BANK CARD - COMPACT -->
+            <div class="bank-card">
+
+                {% if bank_card %}
+
+                <div class="bank-card-header">
+                    <div>
+                        <small>{{ bank_card.bank_name }}</small>
+                        <h2>{{ bank_card.card_type }}</h2>
+                    </div>
+                    <i class="fa fa-credit-card fa-lg"></i>
+                </div>
+
+                <div class="bank-card-number">
+                    **** **** **** {{ bank_card.card_number|slice:"-4:" }}
+                </div>
+
+                <div class="bank-card-holder">
+                    {{ bank_card.card_holder }}
+                </div>
+
+                <div class="bank-stats">
+                    <div class="bank-stat">
+                        <small>Balance</small>
+                        <h4>${{ balance }}</h4>
+                    </div>
+                    <div class="bank-stat">
+                        <small>Income</small>
+                        <h4>${{ total_income }}</h4>
+                    </div>
+                    <div class="bank-stat">
+                        <small>Expense</small>
+                        <h4>${{ total_expense }}</h4>
+                    </div>
+                </div>
+
+                {% else %}
+
+                <h3>No Bank Card Added</h3>
+                <p>Go to <b>Edit Profile</b> and add your first bank card.</p>
+
+                {% endif %}
+
+            </div>
+
+            <!-- SAVINGS GOAL -->
+            <div class="card" style="margin-top:25px;">
+
+                <h3>
+                    <i class="fa fa-bullseye"></i>
+                    Savings Goal
+                </h3>
+
+                {% if savings_goal %}
+
+                    <h4>{{ savings_goal.goal_name }}</h4>
+
+                    <div style="margin:15px 0;">
+
+                        <div style="display:flex;justify-content:space-between;">
+
+                            <span>${{ balance }}</span>
+
+                            <span>${{ savings_goal.target_amount }}</span>
+
+                        </div>
+
+                        <div style="
+                            width:100%;
+                            height:12px;
+                            background:#334155;
+                            border-radius:20px;
+                            overflow:hidden;
+                            margin-top:8px;
+                        ">
+
+                            <div style="
+                                width:{{ progress }}%;
+                                height:100%;
+                                background:#10b981;
+                            "></div>
+
+                        </div>
+
+                    </div>
+
+                    <strong>{{ progress|floatformat:0 }}%</strong> Completed
+
+                {% else %}
+
+                    <p>No savings goal set.</p>
+
+                {% endif %}
+
+            </div>
+
+            <!-- CHART -->
+            <div class="card chart-box">
+                <h3><i class="fa fa-chart-pie"></i> Income vs Expense</h3>
+                <div class="chart-container">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="card">
+
+            <h3><i class="fa fa-clock-rotate-left"></i> Recent Transactions</h3>
+
+            {% for txn in recent_transactions %}
+            <div class="txn">
+                <div class="txn-info">
+                    <b>{{ txn.description }}</b>
+                    <small><i class="fa fa-tag"></i> {{ txn.category.name }}</small>
+                </div>
+
+                <div class="txn-amount {% if txn.type == 'income' %}income{% else %}expense{% endif %}">
+                    {% if txn.type == 'income' %}+{% else %}-{% endif %}${{ txn.amount }}
+                </div>
+            </div>
+            {% empty %}
+            <div class="txn-empty">
+                <i class="fa fa-inbox"></i>
+                <p>No transactions yet</p>
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART SCRIPT -->
+<script>
+const ctx = document.getElementById('chart');
+
+Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
+Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Income', 'Expense'],
+        datasets: [{
+            data: [{{ total_income }}, {{ total_expense }}],
+            backgroundColor: [
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(239, 68, 68, 0.8)'
+            ],
+            borderColor: [
+                'rgba(16, 185, 129, 1)',
+                'rgba(239, 68, 68, 1)'
+            ],
+            borderWidth: 2,
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    font: {
+                        size: 13,
+                        family: 'Inter'
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

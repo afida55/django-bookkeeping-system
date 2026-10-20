@@ -1,0 +1,883 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* PAGE WRAPPER */
+.profile-wrap{
+    display:flex;
+    justify-content:center;
+    padding:40px 20px;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* CARD */
+.profile-card{
+    width: 100%;
+    max-width: 750px;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 35px;
+    color: white;
+    box-shadow:
+        0 25px 50px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* HEADER */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-icon {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.header-text h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+}
+
+.header-text p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+/* TOP SECTION */
+.top{
+    display:flex;
+    align-items:center;
+    gap: 25px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* UPLOAD CIRCLE */
+.upload-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    border: 3px dashed #a78bfa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 92, 246, 0.05);
+    flex-shrink: 0;
+}
+
+.upload-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+.upload-circle .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.7);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: 0.3s;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.upload-circle:hover .overlay {
+    opacity: 1;
+}
+
+.upload-circle .overlay i {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.upload-circle .overlay p {
+    font-size: 13px;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* FILE INPUT - Must be on top to be clickable */
+.upload-circle input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+}
+
+/* Hide the default file input text */
+.upload-circle input[type="file"]::-webkit-file-upload-button {
+    display: none;
+}
+
+.upload-circle input[type="file"]::before {
+    content: '';
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info label {
+    display: block;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* FORCE ALL DJANGO FORM FIELDS TO LOOK SAME */
+#id_phone,
+#id_address,
+#id_bio,
+#id_bank_name,
+#id_card_holder,
+#id_card_number,
+#id_expiry_date,
+#id_card_type,
+#id_card_color,
+#id_goal_name,
+#id_target_amount,
+.user-info input {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #111827 !important;
+    font-size: 14px !important;
+    font-family: 'Inter', sans-serif !important;
+    outline: none !important;
+    transition: all 0.3s ease !important;
+    box-sizing: border-box !important;
+    margin: 6px 0 0 0 !important;
+    display: block !important;
+    height: 50px !important;
+    line-height: 22px !important;
+}
+
+/* Specifically target textarea to remove resize and make it single line */
+#id_address,
+#id_bio {
+    resize: none !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+}
+
+#id_phone:focus,
+#id_address:focus,
+#id_bio:focus,
+#id_bank_name:focus,
+#id_card_holder:focus,
+#id_card_number:focus,
+#id_expiry_date:focus,
+#id_card_type:focus,
+#id_card_color:focus,
+#id_goal_name:focus,
+#id_target_amount:focus,
+.user-info input:focus {
+    border-color: #8b5cf6 !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2) !important;
+}
+
+#id_phone::placeholder,
+#id_address::placeholder,
+#id_bio::placeholder,
+#id_bank_name::placeholder,
+#id_card_holder::placeholder,
+#id_card_number::placeholder,
+#id_expiry_date::placeholder,
+#id_card_type::placeholder,
+#id_card_color::placeholder,
+#id_goal_name::placeholder,
+#id_target_amount::placeholder {
+    color: #6b7280 !important;
+}
+
+.user-info input:disabled {
+    background: rgba(15, 23, 42, 0.5) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    cursor: not-allowed !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+label{
+    display: block;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+/* FILE NAME DISPLAY */
+.file-name {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 10px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 150px;
+}
+
+.file-name i {
+    color: #a78bfa;
+    font-size: 16px;
+}
+
+.file-name.empty {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+/* SECTION TITLE */
+.section-title{
+    margin-top:35px;
+    margin-bottom:20px;
+    font-size:20px;
+    font-weight:700;
+    color:#ffffff;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding-bottom:12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.section-title i{
+    color:#8b5cf6;
+}
+
+/* BANK CARD */
+.bank-card{
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+    color: white;
+    box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+}
+
+.bank-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(139, 92, 246, 0.5);
+}
+
+.bank-card::before{
+    content:"";
+    position:absolute;
+    width: 250px;
+    height: 250px;
+    background:rgba(255,255,255,0.08);
+    border-radius:50%;
+    top:-100px;
+    right:-80px;
+}
+
+.bank-card::after{
+    content:"";
+    position:absolute;
+    width: 150px;
+    height: 150px;
+    background:rgba(255,255,255,0.05);
+    border-radius:50%;
+    bottom:-50px;
+    left:-30px;
+}
+
+.card-title{
+    font-size: 12px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.card-number{
+    font-size: 20px;
+    letter-spacing: 3px;
+    margin: 15px 0;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.card-holder {
+    font-size: 14px;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* STATS */
+.stats{
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stats-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stats-title i {
+    color: #a78bfa;
+}
+
+.bar{
+    margin: 15px 0;
+}
+
+.bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.bar span{
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.bar-percentage {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.bar-percentage.income {
+    color: #10b981;
+}
+
+.bar-percentage.expense {
+    color: #f87171;
+}
+
+.progress{
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.fill-income{
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.fill-expense{
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, #ef4444, #f87171);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+/* INSIGHT */
+.insight{
+    margin-top: 25px;
+    padding: 16px 20px;
+    font-size: 14px;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.insight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #8b5cf6, #a78bfa);
+}
+
+.insight-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #a78bfa;
+    flex-shrink: 0;
+}
+
+/* BUTTONS */
+.btns{
+    margin-top: 30px;
+    display:flex;
+    gap: 12px;
+}
+
+button{
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.save{
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+}
+
+.cancel{
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* RESPONSIVE */
+@media(max-width: 700px){
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-card {
+        padding: 25px 20px;
+    }
+
+    .btns {
+        flex-direction: column;
+    }
+}
+
+.alert-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+
+    color: #fff;
+    animation: shake 0.4s ease-in-out;
+}
+
+.alert-icon {
+    font-size: 22px;
+    color: #ef4444;
+}
+
+.alert-text h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.alert-text p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+
+</style>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+<!-- ERROR MESSAGES -->
+
+{% if form_error %}
+
+<div class="alert-box">
+    <i class="fa fa-circle-exclamation"></i>
+    <div>
+        <strong>Form Incomplete</strong><br>
+        Please fill all required fields before saving.
+    </div>
+</div>
+
+{% endif %}
+
+    <!-- TOP SECTION -->
+    <div class="top">
+
+        <!-- PROFILE IMAGE -->
+        <div class="avatar-upload">
+
+            <div class="upload-circle">
+
+                {% if profile.profile_pic %}
+                    <img id="preview"
+                         src="{{ profile.profile_pic.url }}"
+                         alt="Profile Picture">
+                {% else %}
+                    <img id="preview"
+                         src="https://via.placeholder.com/150"
+                         alt="">
+                {% endif %}
+
+                <div class="overlay">
+                    <i class="fa fa-camera"></i>
+                    <p>Change Photo</p>
+                </div>
+
+                <!-- Hidden file input -->
+                <input
+                    type="file"
+                    id="id_profile_pic"
+                    name="profile_pic"
+                    accept="image/*">
+
+            </div>
+
+            <div class="file-name" id="file-name">
+
+                {% if profile.profile_pic %}
+                    <i class="fa fa-check-circle" style="color:#10b981"></i>
+                    <span>Current profile picture</span>
+                {% else %}
+                    <i class="fa fa-upload"></i>
+                    <span>Click the picture to upload</span>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- USER INFO -->
+        <div class="user-info">
+
+            <div class="form-group">
+                <label>Username</label>
+                {{ u_form.username }}
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                {{ u_form.email }}
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PROFILE DETAILS -->
+    <div class="grid">
+
+        <div class="form-group">
+            <label>Phone</label>
+            {{ p_form.phone }}
+        </div>
+
+        <div class="form-group">
+            <label>Address</label>
+            {{ p_form.address }}
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label>Bio</label>
+        {{ p_form.bio }}
+    </div>
+
+    <!-- ================= BANK CARD ================= -->
+
+    <div class="section-title">
+        <i class="fa fa-credit-card"></i>
+        Bank Card Information
+    </div>
+
+    <div class="grid">
+
+        <div class="form-group">
+            <label>Bank Name</label>
+            {{ card_form.bank_name }}
+        </div>
+
+        <div class="form-group">
+            <label>Card Holder</label>
+            {{ card_form.card_holder }}
+        </div>
+
+        <div class="form-group">
+            <label>Card Number</label>
+            {{ card_form.card_number }}
+        </div>
+
+        <div class="form-group">
+            <label>Expiry Date</label>
+            {{ card_form.expiry_date }}
+        </div>
+
+        <div class="form-group">
+            <label>Card Type</label>
+            {{ card_form.card_type }}
+        </div>
+
+        <div class="form-group">
+            <label>Card Color</label>
+            {{ card_form.card_color }}
+        </div>
+
+    </div>
+
+    <!-- BANK CARD -->
+    <div class="bank-card">
+        <div class="card-title">Virtual Card</div>
+        <div class="card-number">**** **** **** 4821</div>
+        <div class="card-holder">{{ profile.user.username }}</div>
+    </div>
+
+    <!-- ================= SAVINGS GOAL ================= -->
+
+    <div class="section-title">
+        <i class="fa fa-bullseye"></i>
+        Savings Goal
+    </div>
+
+    <div class="grid">
+
+        <div class="form-group">
+            <label>Goal Name</label>
+            {{ goal_form.goal_name }}
+        </div>
+
+        <div class="form-group">
+            <label>Target Amount ($)</label>
+            {{ goal_form.target_amount }}
+        </div>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+
+        <div class="stats-title">
+            <i class="fa fa-chart-bar"></i>
+            Financial Overview
+        </div>
+
+        <div class="bar">
+            <div class="bar-header">
+                <span>Income</span>
+                <span class="bar-percentage income">70%</span>
+            </div>
+
+            <div class="progress">
+                <div class="fill-income"></div>
+            </div>
+        </div>
+
+        <div class="bar">
+            <div class="bar-header">
+                <span>Expense</span>
+                <span class="bar-percentage expense">40%</span>
+            </div>
+
+            <div class="progress">
+                <div class="fill-expense"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- INSIGHT -->
+    <div class="insight">
+
+        <div class="insight-icon">
+            <i class="fa fa-lightbulb"></i>
+        </div>
+
+        <div>
+            You are managing your money well this month!
+        </div>
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="btns">
+
+        <button class="save" type="submit">
+            <i class="fa fa-check"></i>
+            Save Changes
+        </button>
+
+        <button class="cancel"
+                type="button"
+                onclick="window.location.href='{% url 'profile_detail' %}'">
+
+            <i class="fa fa-times"></i>
+            Cancel
+
+        </button>
+
+    </div>
+
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("id_profile_pic");
+    const preview = document.getElementById("preview");
+    const fileName = document.getElementById("file-name");
+
+    input.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+            preview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file);
+
+        fileName.innerHTML = `
+            <i class="fa fa-check-circle" style="color:#10b981"></i>
+            <span>${file.name}</span>
+        `;
+    });
+
+});
+</script>
+
+{% endblock %}
